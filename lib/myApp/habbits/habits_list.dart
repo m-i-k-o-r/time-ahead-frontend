@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../widgetos.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../app_colors.dart';
+import '../widgets.dart';
 
 class Habit {
-  final String name; // Название привычки
-  bool isChecked; // Состояние чекбокса
-  final bool hasNotification; // Имеет ли привычка уведомление
+  final String name;
+  bool isChecked;
+  final bool hasNotification;
 
   Habit({
     required this.name,
@@ -19,9 +21,8 @@ class HabitTrackerScreen extends StatefulWidget {
 }
 
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
-  int _selectedIndex = 0; // Начальный индекс для IndexedStack
+  int _selectedIndex = 0;
 
-  // Список привычек
   List<Habit> habits = [
     Habit(name: 'Утренняя зарядка'),
     Habit(name: 'Стакан воды утром'),
@@ -29,65 +30,125 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     Habit(name: 'Медитация'),
   ];
 
+  List<Habit> _getSortedHabits() {
+    List<Habit> sortedHabits = List.from(habits);
+    sortedHabits.sort((a, b) {
+      int aValue = a.isChecked ? 1 : 0;
+      int bValue = b.isChecked ? 1 : 0;
+
+      return aValue.compareTo(bValue);
+    });
+    return sortedHabits;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(), // Используем CustomAppBar
-      body: IndexedStack(
-        index: _selectedIndex, // Используем _selectedIndex для переключения окон
+      appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(5.0),
+          child: DaySlider(),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            ListView.builder(
+              itemCount: _getSortedHabits().length,
+              itemBuilder: (context, index) {
+                Habit habit = _getSortedHabits()[index];
+
+                bool shouldInsertDivider = (index > 0 && !_getSortedHabits()[index - 1].isChecked && habit.isChecked);
+
+                if (shouldInsertDivider) {
+                  return Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/divider.svg', // Ваш SVG файл
+                        height: 20, // Примерный размер
+                      ),
+                      _buildHabitListTile(habit),
+                    ],
+                  );
+                } else {
+                  return _buildHabitListTile(habit);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Первый экран с привычками
-          ListView.builder(
-            itemCount: habits.length,
-            itemBuilder: (context, index) {
-              Habit habit = habits[index];
-              return Padding(
-                padding: EdgeInsets.all(5.0), // Отступы для овальной формы
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20), // Овальные границы
-                  child: Container(
-                    color: Colors.green, // Цвет фона
-                    child: ListTile(
-                      leading: Checkbox(
-                        value: habit.isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            habit.isChecked = value ?? false; // Обновляет состояние чекбокса
-                          });
-                        },
-                      ),
-                      title: Text(
-                        habit.name,
-                        style: TextStyle(
-                          decoration: habit.isChecked
-                              ? TextDecoration.lineThrough // Зачеркивание текста при отметке
-                              : TextDecoration.none,
-                        ),
-                      ),
-                      trailing: Icon(
-                        habit.hasNotification
-                            ? Icons.notifications // Значок уведомления
-                            : Icons.notifications_off,
-                        color: Colors.indigo, // Цвет значка
-                      ),
-                    ),
-                  ),
-                ),
-              );
+          SizedBox(
+            width: 80, // Увеличьте ширину, чтобы сделать кнопку шире
+            child: FloatingActionButton(
+              onPressed: () {
+                // Действие при нажатии
+              },
+              child: SvgPicture.asset(
+                'assets/icons/add.svg', // Ваша SVG-иконка
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          CustomNavigationBar(
+            selectedIndex: _selectedIndex,
+            onItemTapped: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
             },
           ),
-          Center(child: Text('Второй экран')), // Экран 1
-          Center(child: Text('Третий экран')), // Экран 2
-          Center(child: Text('Четвертый экран')), // Экран 3
         ],
       ),
-      bottomNavigationBar: CustomNavigationBar(
-        selectedIndex: _selectedIndex, // Передаем текущий индекс
-        onItemTapped: (int index) {
-          setState(() {
-            _selectedIndex = index; // Обновляет _selectedIndex
-          });
-        },
+
+    );
+  }
+
+  Widget _buildHabitListTile(Habit habit) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          color: AppColors.white,
+          child: ListTile(
+            leading: GestureDetector(
+              onTap: () {
+                setState(() {
+                  habit.isChecked = !habit.isChecked;
+                });
+              },
+              child: SvgPicture.asset(
+                habit.isChecked
+                    ? 'assets/icons/check-circle.svg'
+                    : 'assets/icons/circle.svg',
+                width: 24,
+                height: 24,
+              ),
+            ),
+            title: Text(
+              habit.name,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: habit.isChecked ? FontWeight.normal : FontWeight.bold,
+                decoration: habit.isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+                color: habit.isChecked ? AppColors.blueWhite.withOpacity(0.9) : Colors.black,
+              ),
+            ),
+            trailing: SvgPicture.asset(
+              habit.hasNotification
+                  ? 'assets/icons/notification-true.svg'
+                  : 'assets/icons/notification-false.svg',
+              width: 24,
+              height: 24,
+            ),
+          ),
+        ),
       ),
     );
   }
