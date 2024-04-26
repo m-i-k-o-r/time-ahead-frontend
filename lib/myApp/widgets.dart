@@ -1,6 +1,7 @@
 import 'package:first_flutter_app/myApp/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   CustomAppBar();
@@ -192,6 +193,256 @@ class SvgDivider extends StatelessWidget {
           colorFilter: ColorFilter.mode(Colors.grey, BlendMode.srcIn), // Цвет иконки
         ),
       ),
+    );
+  }
+}
+
+class Activity {
+  String title;
+  String category;
+  String description;
+  DateTime startTime;
+  DateTime endTime;
+  DateTime date;
+  bool isCompleted;
+
+  Activity({
+    required this.title,
+    required this.category,
+    required this.description,
+    required this.startTime,
+    required this.endTime,
+    required this.date,
+    this.isCompleted = false,
+  });
+}
+
+class ActivityTile extends StatelessWidget {
+  final Activity activity;
+  final VoidCallback onCompleted;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const ActivityTile({
+    required this.activity,
+    required this.onCompleted,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isCompleted = activity.isCompleted;
+
+    return ListTile(
+      title: Text(
+        activity.title,
+        style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${DateFormat('HH:mm').format(activity.startTime)} - ${DateFormat('HH:mm').format(activity.endTime)}'),
+          if (activity.category.isNotEmpty) Text(activity.category),
+        ],
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(
+              isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: isCompleted ? Colors.deepPurple : Colors.deepPurple,
+            ),
+            onPressed: onCompleted,
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            color: Colors.deepPurple,
+            onPressed: onEdit,
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.delete),
+            color: Colors.deepPurple,
+            onPressed: onDelete,
+          ),
+        ],
+      ),
+      tileColor: isCompleted ? Colors.indigo[50] : null,
+    );
+  }
+}
+
+class AddActivityDialog extends StatefulWidget {
+  final Function(String title, String category, String description, DateTime startTime, DateTime endTime) onAdd;
+  final List<String> Function() getCategories; // Добавляем новый параметр - функцию
+
+  const AddActivityDialog({
+    required this.onAdd,
+    required this.getCategories, // Не забываем инициализировать его в конструкторе
+  });
+
+  @override
+  _AddActivityDialogState createState() => _AddActivityDialogState();
+}
+
+class _AddActivityDialogState extends State<AddActivityDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _categoryController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  late DateTime _startTime;
+  late DateTime _endTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoryController.text = '';
+    _startTime = DateTime.now();
+    _endTime = DateTime.now().add(const Duration(hours: 1));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Activity'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a title';
+                }
+                return null;
+              },
+            ),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Category',
+              ),
+              value: _categoryController.text.isEmpty ? null : _categoryController.text,
+              onChanged: (value) {
+                setState(() {
+                  _categoryController.text = value ?? '';
+                });
+              },
+              items: [
+                const DropdownMenuItem<String>(
+                  value: null,
+                  child: Text('No category'),
+                ),
+                ...widget.getCategories().map((category) { // Используем функцию для получения категорий
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }),
+              ],
+            ),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Start Time',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final newTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(_startTime),
+                          builder: (BuildContext context, Widget? child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: true),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (newTime != null) {
+                          setState(() {
+                            _startTime = DateTime(_startTime.year,
+                                _startTime.month, _startTime.day, newTime.hour, newTime.minute);
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(DateFormat('HH:mm').format(_startTime)),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'End Time',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final newTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(_endTime),
+                        );
+                        if (newTime != null) {
+                          setState(() {
+                            _endTime = DateTime(_endTime.year, _endTime.month,
+                                _endTime.day, newTime.hour, newTime.minute);
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(DateFormat('HH:mm').format(_endTime)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              final title = _titleController.text;
+              final category = _categoryController.text;
+              final description = _descriptionController.text;
+              widget.onAdd(title, category, description, _startTime, _endTime);
+              Navigator.of(context).pop();
+            }
+          },
+          child: const Text('Add'),
+        ),
+      ],
     );
   }
 }
