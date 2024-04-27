@@ -95,7 +95,7 @@ class CustomNavigationBar extends StatelessWidget {
             )
           ],
           indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))
+              borderRadius: BorderRadius.all(Radius.circular(8))
           ),
         ),
       ),
@@ -196,6 +196,7 @@ class SvgDivider extends StatelessWidget {
     );
   }
 }
+
 
 class Activity {
   String title;
