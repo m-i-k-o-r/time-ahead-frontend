@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets.dart';
 
-class MyHomePage extends StatefulWidget {
+class ActivityList extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ActivityListState createState() => _ActivityListState();
 
   List<String> getCategories() {
-    return _MyHomePageState.categories;
+    return _ActivityListState.categories;
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ActivityListState extends State<ActivityList> {
   static const List<String> categories = ['Work', 'Study', 'Sport'];
 
   DateTime _currentDate = DateTime.now();
