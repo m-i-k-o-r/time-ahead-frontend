@@ -78,7 +78,6 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
             width: 70,
             child: FloatingActionButton(
               onPressed: () async {
-                // Переход к экрану создания привычки
                 final habitData = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -86,7 +85,6 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                   ),
                 );
 
-                // Если habitData != null, добавляем новую привычку в список
                 if (habitData != null) {
                   setState(() {
                     habits.add(

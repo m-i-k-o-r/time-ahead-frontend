@@ -145,7 +145,7 @@ class _ActivityListState extends State<ActivityList> {
           context: context,
           builder: (context) => AddActivityDialog(
             onAdd: _addActivity,
-            getCategories: () => categories, // Передаем функцию, которая возвращает список категорий
+            getCategories: () => categories,
           ),
         ),
       ),

@@ -12,7 +12,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   TimeOfDay _reminderTime = TimeOfDay.now();
-  final Set<int> _selectedDays = {}; // Множество выбранных дней недели
+  final Set<int> _selectedDays = {};
 
 
   void _createHabit() {
@@ -30,7 +30,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(55.0), // Увеличиваем размер, учитывая padding
+          preferredSize: Size.fromHeight(55.0),
           child: Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
             child: AppBar(
@@ -39,7 +39,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.pop(context); // Возвращаемся назад
+                  Navigator.pop(context);
                 },
               ),
               shape: RoundedRectangleBorder(
@@ -60,10 +60,10 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 8), // Добавляем небольшой отступ между текстовым полем и временем уведомления
+            SizedBox(height: 8),
             Text(
-              _reminderTime.format(context), // Отображаем время уведомления
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal), // Изменяем стиль текста на не жирный
+              _reminderTime.format(context),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             SizedBox(height: 20),
             Row(
@@ -74,7 +74,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
                     child: MediaQuery(
                       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
                       child: Text(_reminderTime.format(context)),
-                    ) // Отображаем только часы и минуты
+                    )
                 ),
                 Text('Время напоминания')
               ],
@@ -106,7 +106,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createHabit, // Вызываем метод _createHabit
+        onPressed: _createHabit,
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
       ),
