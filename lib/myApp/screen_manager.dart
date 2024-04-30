@@ -1,7 +1,7 @@
 import 'package:first_flutter_app/myApp/activity/activity_list.dart';
 import 'package:first_flutter_app/myApp/habits/habits_list.dart';
 import 'package:first_flutter_app/myApp/profile/profile_page.dart';
-import 'package:first_flutter_app/myApp/tasks/to-do_list.dart';
+import 'package:first_flutter_app/myApp/tasks/task_list.dart';
 import 'package:first_flutter_app/myApp/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class _MainScreenState extends State<ScreenManager> {
 
   final List<Widget> _screens = [
     ActivityList(), // Экран активностей
-    ToDoList(),
+    MyHomePage(),
     HabitTrackerScreen(),// Экран задач
     ProfilePage() // Экран профиля
   ];
