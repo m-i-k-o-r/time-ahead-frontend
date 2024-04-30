@@ -197,7 +197,6 @@ class SvgDivider extends StatelessWidget {
   }
 }
 
-
 class Activity {
   String title;
   String category;
