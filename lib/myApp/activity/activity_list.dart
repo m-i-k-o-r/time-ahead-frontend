@@ -1,3 +1,4 @@
+import 'package:first_flutter_app/myApp/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets.dart';
@@ -85,7 +86,7 @@ class _ActivityListState extends State<ActivityList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Activity Tracker'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: AppColors.blueWhite,
       ),
       body: Column(
         children: [

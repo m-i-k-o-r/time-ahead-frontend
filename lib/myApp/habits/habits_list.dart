@@ -1,8 +1,22 @@
+import 'package:first_flutter_app/myApp/habits/habit_making.dart';
 import 'package:first_flutter_app/myApp/habits/habits_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../widgets.dart';
 
+class HabitData {
+  final String title;
+  final String description;
+  final TimeOfDay reminderTime;
+  final Set<int> selectedDays;
+
+  HabitData({
+    required this.title,
+    required this.description,
+    required this.reminderTime,
+    required this.selectedDays,
+  });
+}
 
 class HabitTrackerScreen extends StatefulWidget {
   @override
@@ -10,6 +24,11 @@ class HabitTrackerScreen extends StatefulWidget {
 }
 
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
+
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TimeOfDay _reminderTime = TimeOfDay.now();
+  Set<int> _selectedDays = {};
 
   List<Habit> habits = [
     Habit(name: 'Утренняя зарядка'),
@@ -22,6 +41,17 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     setState(() {
       habit.isChecked = !habit.isChecked;
     });
+  }
+
+  void _createHabit() {
+    final habitData = HabitData(
+      title: _titleController.text,
+      description: _descriptionController.text,
+      reminderTime: _reminderTime,
+      selectedDays: _selectedDays,
+    );
+
+    Navigator.pop(context, habitData);
   }
 
   @override
@@ -43,14 +73,33 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(left: 15.0),
         child: Align(
-          alignment: Alignment.bottomCenter, // Выравнивание по нижней центральной точке
+          alignment: Alignment.bottomCenter,
           child: Container(
             width: 70,
             child: FloatingActionButton(
-              onPressed: () {
-                // Действие при нажатии на кнопку
+              onPressed: () async {
+                // Переход к экрану создания привычки
+                final habitData = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HabitCreationScreen(),
+                  ),
+                );
+
+                // Если habitData != null, добавляем новую привычку в список
+                if (habitData != null) {
+                  setState(() {
+                    habits.add(
+                      Habit(
+                        name: habitData.title,
+                        isChecked: false,
+                        hasNotification: habitData.selectedDays.isNotEmpty,
+                      ),
+                    );
+                  });
+                }
               },
-              child: SvgPicture.asset('assets/icons/add.svg'), // Иконка внутри кнопки
+              child: SvgPicture.asset('assets/icons/add.svg'),
             ),
           ),
         ),
@@ -58,6 +107,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     );
   }
 }
+
 
 
 
