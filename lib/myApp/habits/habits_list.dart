@@ -1,8 +1,22 @@
+import 'package:first_flutter_app/myApp/habits/habit_making.dart';
 import 'package:first_flutter_app/myApp/habits/habits_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../widgets.dart';
 
+class HabitData {
+  final String title;
+  final String description;
+  final TimeOfDay reminderTime;
+  final Set<int> selectedDays;
+
+  HabitData({
+    required this.title,
+    required this.description,
+    required this.reminderTime,
+    required this.selectedDays,
+  });
+}
 
 class HabitTrackerScreen extends StatefulWidget {
   @override
@@ -10,13 +24,12 @@ class HabitTrackerScreen extends StatefulWidget {
 }
 
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
+  // TextEditingController _titleController = TextEditingController();
+  // TextEditingController _descriptionController = TextEditingController();
+  // TimeOfDay _reminderTime = TimeOfDay.now();
+  // Set<int> _selectedDays = {};
 
-  List<Habit> habits = [
-    Habit(name: 'Утренняя зарядка'),
-    Habit(name: 'Стакан воды утром'),
-    Habit(name: 'Прогулка 30 минут'),
-    Habit(name: 'Медитация'),
-  ];
+  List<Habit> habits = [];
 
   void _toggleHabitCheck(Habit habit) {
     setState(() {
@@ -27,12 +40,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(5.0),
-          child: DaySlider(),
-        ),
-      ),
+      appBar: CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: HabitsList(
@@ -43,14 +51,34 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(left: 15.0),
         child: Align(
-          alignment: Alignment.bottomCenter, // Выравнивание по нижней центральной точке
+          alignment: Alignment.bottomCenter,
           child: Container(
             width: 70,
             child: FloatingActionButton(
-              onPressed: () {
-                // Действие при нажатии на кнопку
+              onPressed: () async {
+                final habitData = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HabitCreationScreen(),
+                  ),
+                );
+
+                if (habitData != null) {
+                  setState(() {
+                    habits.add(
+                      Habit(
+                        name: habitData.title,
+                        isChecked: false,
+                        hasNotification: habitData.selectedDays.isNotEmpty,
+                        reminderTime: habitData.reminderTime,
+                        selectedDays: habitData.selectedDays,
+                        description: habitData.description,
+                      ),
+                    );
+                  });
+                }
               },
-              child: SvgPicture.asset('assets/icons/add.svg'), // Иконка внутри кнопки
+              child: SvgPicture.asset('assets/icons/add.svg'),
             ),
           ),
         ),
@@ -58,9 +86,3 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     );
   }
 }
-
-
-
-
-
-

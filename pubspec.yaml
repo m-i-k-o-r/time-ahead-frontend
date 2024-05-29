@@ -28,4 +28,6 @@ flutter:
 
   assets:
     - assets/icons/
+    - assets/icons/daysOfWeek/
+    - assets/icons/dividers/
 
