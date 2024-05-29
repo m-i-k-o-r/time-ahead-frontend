@@ -24,18 +24,12 @@ class HabitTrackerScreen extends StatefulWidget {
 }
 
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
+  // TextEditingController _titleController = TextEditingController();
+  // TextEditingController _descriptionController = TextEditingController();
+  // TimeOfDay _reminderTime = TimeOfDay.now();
+  // Set<int> _selectedDays = {};
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TimeOfDay _reminderTime = TimeOfDay.now();
-  Set<int> _selectedDays = {};
-
-  List<Habit> habits = [
-    Habit(name: 'Утренняя зарядка'),
-    Habit(name: 'Стакан воды утром'),
-    Habit(name: 'Прогулка 30 минут'),
-    Habit(name: 'Медитация'),
-  ];
+  List<Habit> habits = [];
 
   void _toggleHabitCheck(Habit habit) {
     setState(() {
@@ -43,26 +37,10 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     });
   }
 
-  void _createHabit() {
-    final habitData = HabitData(
-      title: _titleController.text,
-      description: _descriptionController.text,
-      reminderTime: _reminderTime,
-      selectedDays: _selectedDays,
-    );
-
-    Navigator.pop(context, habitData);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(5.0),
-          child: DaySlider(),
-        ),
-      ),
+      appBar: CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: HabitsList(
@@ -92,6 +70,9 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                         name: habitData.title,
                         isChecked: false,
                         hasNotification: habitData.selectedDays.isNotEmpty,
+                        reminderTime: habitData.reminderTime,
+                        selectedDays: habitData.selectedDays,
+                        description: habitData.description,
                       ),
                     );
                   });
@@ -105,10 +86,3 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     );
   }
 }
-
-
-
-
-
-
-
