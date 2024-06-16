@@ -1,4 +1,4 @@
-import 'package:first_flutter_app/myApp/habits/habit_making.dart';
+import 'package:first_flutter_app/myApp/habits/habit_creating.dart';
 import 'package:first_flutter_app/myApp/habits/habits_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

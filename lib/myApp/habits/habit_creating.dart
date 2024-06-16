@@ -236,8 +236,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
                       ]
                   ),
                 ),
-                SvgDivider(
-                    svgPath: 'assets/icons/dividers/divider.svg', padding: 10),
+                SvgDivider(svgPath: 'assets/icons/dividers/divider.svg', padding: 10),
                 Padding(
                   padding: const EdgeInsets.only(right: 180),
                   child: ReminderTimeButton(
