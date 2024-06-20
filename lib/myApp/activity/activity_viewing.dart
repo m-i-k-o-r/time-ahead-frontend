@@ -1,9 +1,10 @@
 import 'package:first_flutter_app/myApp/activity/activities_widgets.dart';
 import 'package:first_flutter_app/myApp/app_colors.dart';
-import 'package:first_flutter_app/myApp/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:first_flutter_app/myApp/activity/activities_list.dart';
+import 'package:provider/provider.dart';
+import '../category_model.dart';
+import '../widgets.dart';
 
 class ActivityDetailScreen extends StatelessWidget {
   final Activity activity;
@@ -179,15 +180,23 @@ class ActivityDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      Text(
-                        activity.category.isEmpty
-                            ? ActivityListState.noCategory
-                            : activity.category,
-                        style: const TextStyle(
-                          color: AppColors.darkBlue,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Consumer<CategoryModel>(
+                        builder: (context, categoryModel, child) {
+                          final categoryName = activity.category.isEmpty
+                              ? 'No Category'
+                              : activity.category;
+
+                          return Text(
+                            categoryModel.categories.contains(categoryName)
+                                ? categoryName
+                                : 'No Category',
+                            style: const TextStyle(
+                              color: AppColors.darkBlue,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

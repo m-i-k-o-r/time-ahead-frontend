@@ -3,7 +3,8 @@ import 'package:first_flutter_app/myApp/app_colors.dart';
 import 'package:first_flutter_app/myApp/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:first_flutter_app/myApp/activity/activities_list.dart';
+import 'package:provider/provider.dart';
+import '../category_model.dart';
 
 class EditActivityScreen extends StatefulWidget {
   final Activity activity;
@@ -11,7 +12,8 @@ class EditActivityScreen extends StatefulWidget {
   final Function(DateTime, int) onDelete;
   final Map<DateTime, List<Activity>> activities;
 
-  const EditActivityScreen({super.key,
+  const EditActivityScreen({
+    super.key,
     required this.activity,
     required this.onUpdate,
     required this.onDelete,
@@ -268,29 +270,33 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    DropdownButtonFormField<String?>(
-                      value: _selectedCategory,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCategory = value;
-                        });
-                      },
-                      items: [null, ...ActivityListState.categories].map((category) {
-                        return DropdownMenuItem<String?>(
-                          value: category,
-                          child: Text(
-                            category ?? ActivityListState.noCategory,
-                            style: const TextStyle(
-                              color: AppColors.darkBlue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18.0,
-                            ),
+                    Consumer<CategoryModel>(
+                      builder: (context, categoryModel, child) {
+                        return DropdownButtonFormField<String?>(
+                          value: _selectedCategory,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCategory = value;
+                            });
+                          },
+                          items: [null, ...categoryModel.categories].map((category) {
+                            return DropdownMenuItem<String?>(
+                              value: category,
+                              child: Text(
+                                category ?? 'No Category',
+                                style: const TextStyle(
+                                  color: AppColors.darkBlue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
                           ),
                         );
-                      }).toList(),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
+                      },
                     ),
                   ],
                 ),
