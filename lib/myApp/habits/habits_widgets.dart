@@ -1,29 +1,28 @@
 import 'package:first_flutter_app/myApp/habits/habit_creating.dart';
+import 'package:first_flutter_app/myApp/habits/habit_viewing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app_colors.dart';
 
 class Habit {
-  final String name;
-  final String description;
+  String name;
+  String description;
   bool isChecked;
-  final bool hasNotification;
-  final TimeOfDay reminderTime;
-  final Set<int> selectedDays;
+  TimeOfDay reminderTime;
+  Set<int> selectedDays;
 
   Habit({
     required this.name,
-    required this.description,
+    this.description = "",
     this.isChecked = false,
-    this.hasNotification = true,
     required this.reminderTime,
     required this.selectedDays,
   });
 }
 
 
-class HabitsList extends StatelessWidget {
+class HabitsList extends StatefulWidget {
   final List<Habit> habits;
   final Function(Habit) onToggleCheck;
 
@@ -33,15 +32,29 @@ class HabitsList extends StatelessWidget {
     required this.onToggleCheck,
   }) : super(key: key);
 
+  @override
+  _HabitsListState createState() => _HabitsListState();
+}
+
+class _HabitsListState extends State<HabitsList> {
   List<Habit> _getSortedHabits() {
-    List<Habit> sortedHabits = List.from(habits);
+    List<Habit> sortedHabits = List.from(widget.habits);
     sortedHabits.sort((a, b) {
       int aValue = a.isChecked ? 1 : 0;
       int bValue = b.isChecked ? 1 : 0;
-
       return aValue.compareTo(bValue);
     });
     return sortedHabits;
+  }
+
+  void updateHabit(Habit updatedHabit) {
+    int index = widget.habits.indexWhere((habit) => habit.name == updatedHabit.name);
+
+    if (index != -1) {
+      setState(() {
+        widget.habits[index] = updatedHabit;
+      });
+    }
   }
 
   @override
@@ -84,21 +97,22 @@ class HabitsList extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HabitCreationScreen(
-                    habitData: HabitData(
-                      title: habit.name,
-                      description: habit.description,
-                      reminderTime: habit.reminderTime,
-                      selectedDays: habit.selectedDays,
-                    ),
-
+                  builder: (context) => HabitDetailScreen(
+                    habit: habit,
+                    onUpdate: (updatedHabit) {
+                      updateHabit(updatedHabit);
+                    },
+                    onEdit: () {
+                    },
+                    onDelete: () {
+                    },
                   ),
                 ),
               );
             },
             leading: GestureDetector(
               onTap: () {
-                onToggleCheck(habit);
+                widget.onToggleCheck(habit);
               },
               child: SvgPicture.asset(
                 habit.isChecked

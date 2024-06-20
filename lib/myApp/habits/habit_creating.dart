@@ -216,7 +216,7 @@ class _HabitCreationScreenState extends State<HabitCreationScreen> {
                           padding: const EdgeInsets.only(left: 15, top: 0),
                           child: TextFormField(
                             controller: _titleController,
-                            maxLength: 75,
+                            maxLength: 60,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18.0,

@@ -24,10 +24,6 @@ class HabitTrackerScreen extends StatefulWidget {
 }
 
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
-  // TextEditingController _titleController = TextEditingController();
-  // TextEditingController _descriptionController = TextEditingController();
-  // TimeOfDay _reminderTime = TimeOfDay.now();
-  // Set<int> _selectedDays = {};
 
   List<Habit> habits = [];
 
@@ -69,7 +65,6 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                       Habit(
                         name: habitData.title,
                         isChecked: false,
-                        hasNotification: habitData.selectedDays.isNotEmpty,
                         reminderTime: habitData.reminderTime,
                         selectedDays: habitData.selectedDays,
                         description: habitData.description,
