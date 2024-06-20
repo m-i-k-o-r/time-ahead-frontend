@@ -95,7 +95,7 @@ class ActivityTile extends StatelessWidget {
                 style: TextStyle(color: isCompleted ? AppColors.darkBlue : AppColors.white),
               ),
               Text(
-                "${activity.category} ",
+                activity.category.isNotEmpty ? activity.category : '',
                 style: TextStyle(color: isCompleted ? AppColors.darkBlue : AppColors.white),
               ),
             ],
